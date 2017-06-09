@@ -27,7 +27,8 @@ public class NgBooksBackendApplication {
 	
 	  @Bean
 	  RouterFunction<?> routerFunction(BookHandler bookHandler) {
-	     return route(GET("/books"), bookHandler::all);
+	     return route(GET("/books"), bookHandler::all)
+	    		 .andRoute(GET("/books/{id}"), bookHandler::byId);
 	  }
 	
 	
@@ -40,5 +41,9 @@ class BookHandler{
 	Mono<ServerResponse> all(ServerRequest request){
 		return ok().body(Flux.just(new Book(1,"think and grow rich","desc"),new Book(2,"Man's search for meaning","there")), Book.class);
 	}
+	
+	Mono<ServerResponse> byId(ServerRequest request) {
+        return ok().body(new Book(1,"think and grow rich","desc"), Book.class);
+    }
 	
 }
