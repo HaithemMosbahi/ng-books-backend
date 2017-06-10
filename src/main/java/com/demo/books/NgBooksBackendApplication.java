@@ -39,11 +39,11 @@ class BookHandler{
 	
 	
 	Mono<ServerResponse> all(ServerRequest request){
-		return ok().body(Flux.just(new Book(1,"think and grow rich","desc"),new Book(2,"Man's search for meaning","there")), Book.class);
+		return ok().body(Flux.just(new Book((long)1,"book 1",""),new Book((long)2,"book 2","")), Book.class);
 	}
 	
 	Mono<ServerResponse> byId(ServerRequest request) {
-        return ok().body(new Book(1,"think and grow rich","desc"), Book.class);
+        return ok().body(Mono.just(new Book((long)1,"think and grow rich","desc")), Book.class);
     }
 	
 }
