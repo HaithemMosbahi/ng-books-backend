@@ -5,6 +5,8 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,8 +17,12 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import com.demo.books.model.Authority;
 import com.demo.books.model.Book;
+import com.demo.books.model.User;
+import com.demo.books.repository.AuthorityRepository;
 import com.demo.books.repository.BookRepository;
+import com.demo.books.repository.UserRespoistory;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,11 +35,28 @@ public class NgBooksBackendApplication implements CommandLineRunner {
 	}
 	
 	@Bean
-    CommandLineRunner dummyData(BookRepository bookRepository) {
+    CommandLineRunner dummyData(BookRepository bookRepository,
+    		         UserRespoistory userRespoistory,AuthorityRepository authorityRepository) {
     	return args -> {
-    		bookRepository.save(new Book((long)1,"Think And Grow Rich"));
-    		bookRepository.save(new Book((long)2,"Man's search for meaning"));
-    		bookRepository.save(new Book((long)3,"The 33 strategies of war"));
+    		
+    		authorityRepository.deleteAll();
+    		authorityRepository.save(new Authority("user"));
+    		authorityRepository.save(new Authority("admin"));
+    		
+    		bookRepository.deleteAll();
+    		bookRepository.save(new Book("Think And Grow Rich"));
+    		bookRepository.save(new Book("Man's search for meaning"));
+    		bookRepository.save(new Book("The 33 strategies of war"));
+    		
+    		userRespoistory.deleteAll();
+    		Set<Authority> authorities = new HashSet<>(Arrays.asList(authorityRepository.findById("user").get()));
+    		
+    		userRespoistory.save(new User("userBook1",authorities));
+    		userRespoistory.save(new User("userBook2",authorities));
+    		userRespoistory.save(new User("userBook2",authorities));
+
+
+    		
     		
     	};
     }
