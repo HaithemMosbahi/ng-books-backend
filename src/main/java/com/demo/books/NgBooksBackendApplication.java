@@ -1,22 +1,21 @@
 package com.demo.books;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.books.model.Authority;
 import com.demo.books.model.Book;
@@ -25,11 +24,16 @@ import com.demo.books.repository.AuthorityRepository;
 import com.demo.books.repository.BookRepository;
 import com.demo.books.repository.UserRespoistory;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+/**
+ * Application Entry point 
+ * 
+ * @author hmosbahi
+ *
+ */
 
 @SpringBootApplication
-public class NgBooksBackendApplication implements CommandLineRunner {
+@EnableOAuth2Sso
+public class NgBooksBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(NgBooksBackendApplication.class, args);
@@ -50,7 +54,7 @@ public class NgBooksBackendApplication implements CommandLineRunner {
     		      .map(Book::new)
     		      .forEach(bookRepository::save);
     		
-    		Set<Authority> authorities = new HashSet<>(Arrays.asList(authorityRepository.findById("user").get()));
+    		Set<Authority> authorities = new HashSet<>(Arrays.asList(authorityRepository.findOne("user")));
            
     		Stream.of("userBook1","userBook2","userBook3")
     		      .map(username -> new User(username, authorities))
@@ -62,28 +66,10 @@ public class NgBooksBackendApplication implements CommandLineRunner {
     }
 	
 
-	/**
-	 * Represents api routes based on the brand new Web Functional framework
-	 * 
-	 * @param bookHandler
-	 * @return
-	 */
-	@Bean
-	RouterFunction<?> routerFunction(BookHandler bookHandler) {
-		return route(GET("/books"), bookHandler::all).andRoute(GET("/books/{id}"), bookHandler::byId);
-	}
-
-
-
-	@Override
-	public void run(String... arg0) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
 
-@Component
+@RestController
+@RequestMapping("books")
 class BookHandler {
 	
 	private final BookRepository bookRepository;
@@ -92,14 +78,14 @@ class BookHandler {
 		this.bookRepository = bookRepository;
 	}
 
-	Mono<ServerResponse> all(ServerRequest request) {
-		return ok().body(Flux.just(bookRepository.findAll().toArray(new Book[3])), Book.class);
+	@GetMapping
+	public List<Book> all() {
+		return bookRepository.findAll();
 	}
 
-	Mono<ServerResponse> byId(ServerRequest request) {
-		return ok()
-				.body(Mono.justOrEmpty(bookRepository.findById(Long.parseLong(request.pathVariable("id")))),
-				 Book.class);
+	@GetMapping(path="/{id}")
+	public Book byId(@PathVariable Long id) {
+		return bookRepository.findOne(id);
 	}
 
 }
