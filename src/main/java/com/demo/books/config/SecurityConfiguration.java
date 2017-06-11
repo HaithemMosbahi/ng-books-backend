@@ -1,10 +1,5 @@
 package com.demo.books.config;
 
-import static java.util.Arrays.asList;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
@@ -19,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.web.server.WebFilter;
+import com.demo.books.service.UserService;
 
 import reactor.core.publisher.Mono;
 
@@ -31,28 +27,18 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class SecurityConfiguration {
 
-    public static final String AUTHORITY_USER = "user";
-
-    private Map<String, List<String>> users = new ConcurrentHashMap<String, List<String>>() {
-        {
-            put("user1", asList(AUTHORITY_USER));
-            put("user2", asList(AUTHORITY_USER));
-       
-        }
-    };
-    
     @Bean
-    UserDetailsRepository userDetailsRepository(){
-    	return username -> Mono.justOrEmpty(users.get(username))
-                .flatMapIterable(Function.identity())
+    UserDetailsRepository userDetailsRepository(UserService userService){
+    	return username -> Mono.justOrEmpty(userService.getUserAuhorities(username))
+    			.flatMapIterable(Function.identity())
                 .map(SimpleGrantedAuthority::new)
                 .collectList()
                 .map(grantedAuthorities -> new User(username, "password", grantedAuthorities));
     }
     
     @Bean
-    ReactiveAuthenticationManager reactiveAuthenticationManager() {
-        return new UserDetailsRepositoryAuthenticationManager(userDetailsRepository());
+    ReactiveAuthenticationManager reactiveAuthenticationManager(UserService userService) {
+        return new UserDetailsRepositoryAuthenticationManager(userDetailsRepository(userService));
     }
 
     @Bean
@@ -66,7 +52,7 @@ public class SecurityConfiguration {
     private Mono<AuthorizationDecision> authorize(Mono<Authentication> authentication, AuthorizationContext ctx) {
         return authentication
                 .flatMapIterable(Authentication::getAuthorities)
-                .any(ga -> ga.getAuthority().equalsIgnoreCase(AUTHORITY_USER))
+                .any(ga -> ga.getAuthority().equalsIgnoreCase("user"))
                 .map(AuthorizationDecision::new);
     }
 
