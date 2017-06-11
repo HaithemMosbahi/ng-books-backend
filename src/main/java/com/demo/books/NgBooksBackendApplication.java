@@ -7,6 +7,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -40,22 +41,21 @@ public class NgBooksBackendApplication implements CommandLineRunner {
     	return args -> {
     		
     		authorityRepository.deleteAll();
-    		authorityRepository.save(new Authority("user"));
-    		authorityRepository.save(new Authority("admin"));
-    		
     		bookRepository.deleteAll();
-    		bookRepository.save(new Book("Think And Grow Rich"));
-    		bookRepository.save(new Book("Man's search for meaning"));
-    		bookRepository.save(new Book("The 33 strategies of war"));
-    		
     		userRespoistory.deleteAll();
-    		Set<Authority> authorities = new HashSet<>(Arrays.asList(authorityRepository.findById("user").get()));
+
+
+    		Stream.of("user","admin").map(Authority::new).forEach(authorityRepository::save);
+    		Stream.of("Think And Grow Rich","Man's search for meaning","The 33 strategies of war")
+    		      .map(Book::new)
+    		      .forEach(bookRepository::save);
     		
-    		userRespoistory.save(new User("userBook1",authorities));
-    		userRespoistory.save(new User("userBook2",authorities));
-    		userRespoistory.save(new User("userBook2",authorities));
-
-
+    		Set<Authority> authorities = new HashSet<>(Arrays.asList(authorityRepository.findById("user").get()));
+           
+    		Stream.of("userBook1","userBook2","userBook3")
+    		      .map(username -> new User(username, authorities))
+    		      .forEach(userRespoistory::save);
+    	
     		
     		
     	};
