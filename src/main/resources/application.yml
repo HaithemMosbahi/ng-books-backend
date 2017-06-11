@@ -1,0 +1,22 @@
+goodreads:
+     api:
+       key : WmRZaUeLnRX0tbLPAKUSbQ
+books:
+    api:
+       url : https://www.googleapis.com/books/v1/volumes
+
+#security.oauth2.client.google.client-id=692923747177-5939rkm92lgvvapi5og711c7h145lsdt.apps.googleusercontent.com 
+#security.oauth2.client.google.client-secret=FIULif34Dx1u4vIF849RG_M0 
+
+security:
+  oauth2:
+    client:
+      clientId: 233668646673605
+      clientSecret: 33b17e044ee6a4fa383f46ec6e28ea1d
+      accessTokenUri: https://graph.facebook.com/oauth/access_token
+      userAuthorizationUri: https://www.facebook.com/dialog/oauth
+      tokenName: oauth_token
+      authenticationScheme: query
+      clientAuthenticationScheme: form
+    resource:
+      userInfoUri: https://graph.facebook.com/me

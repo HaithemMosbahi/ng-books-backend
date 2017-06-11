@@ -1,5 +1,5 @@
 package com.demo.books.config;
-
+/*
 import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
@@ -8,6 +8,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UserDetailsRepository;
 import org.springframework.security.authentication.UserDetailsRepositoryAuthenticationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.web.server.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,12 +19,12 @@ import com.demo.books.service.UserService;
 
 import reactor.core.publisher.Mono;
 
-/**
+*//**
  * Security configuration class 
  * 
  * @author hmosbahi
  *
- */
+ *//*
 @Configuration
 public class SecurityConfiguration {
 
@@ -46,6 +47,7 @@ public class SecurityConfiguration {
         HttpSecurity http = HttpSecurity.http();
         http.authenticationManager(manager).httpBasic();
         http.authorizeExchange().antMatchers("/**").access(this::authorize);
+        
         return http.build();
     }
     
@@ -58,3 +60,4 @@ public class SecurityConfiguration {
 
 }
 
+*/
