@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.Filter;
 
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,6 +36,8 @@ import org.springframework.web.filter.CompositeFilter;
  * @author hmosbahi
  *
  */
+@Configuration
+@EnableOAuth2Sso
 @EnableOAuth2Client
 @EnableAuthorizationServer
 @Order(6)

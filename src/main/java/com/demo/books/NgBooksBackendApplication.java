@@ -32,7 +32,6 @@ import com.demo.books.repository.UserRespoistory;
  */
 
 @SpringBootApplication
-@EnableOAuth2Sso
 public class NgBooksBackendApplication {
 
 	public static void main(String[] args) {
