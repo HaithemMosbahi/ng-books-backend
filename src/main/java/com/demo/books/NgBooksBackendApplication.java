@@ -1,6 +1,7 @@
 package com.demo.books;
 
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +66,19 @@ public class NgBooksBackendApplication {
     }
 	
 
+}
+
+
+@RestController
+@RequestMapping("home")
+class UserResource {
+	
+	
+	@GetMapping
+	public String autheticated(Principal principal) {
+		return principal.getName();
+	}
+	
 }
 
 @RestController
